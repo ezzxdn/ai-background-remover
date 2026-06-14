@@ -1,94 +1,103 @@
 import streamlit as st
 import numpy as np
+
+from views.home import home_page
 from views.remover import remover_page
-from views.photobox import photobox_page
 
 # ==============================================================================
-# 📊 INITIALIZE GLOBAL STATS (WAJIB UNTUK METRIK & GRAPH)
-# ==============================================================================
-# Menghitung total gambar yang diproses di kedua tab (Remover & Photobox)
-if "total_processed_images" not in st.session_state:
-    st.session_state.total_processed_images = 0
-
-# Menyimpan durasi waktu pemrosesan AI terakhir
-if "last_inference_time" not in st.session_state:
-    st.session_state.last_inference_time = 0.0
-
-# Menyimpan riwayat durasi pemrosesan untuk grafik tren linier
-# Kita beri 3 data awal (baseline) agar grafik sudah langsung terisi estetik saat web dibuka
-if "inference_history" not in st.session_state:
-    st.session_state.inference_history = [1.45, 1.32, 1.28]
-
-
-# ==============================================================================
-# 💻 APP LAYOUT CONFIGURATION
+# PAGE CONFIG
 # ==============================================================================
 st.set_page_config(
-    page_title="AI Photobox Studio",
-    page_icon="📸",
+    page_title="AI Background Remover",
+    page_icon="🖼️",
     layout="wide"
 )
 
-st.title("📸 AI Photobox Studio")
+# ==============================================================================
+# SESSION STATE
+# ==============================================================================
+if "total_processed_images" not in st.session_state:
+    st.session_state.total_processed_images = 0
 
-# Area Navigasi Utama Fitur Aplikasi (Modular Views)
-tab1, tab2 = st.tabs([
-    "🖼️ Background Remover",
-    "🎞️ Realtime Photobox"
-])
+if "last_inference_time" not in st.session_state:
+    st.session_state.last_inference_time = 0.0
 
-with tab1:
-    remover_page()
-
-with tab2:
-    photobox_page()
-
+if "inference_history" not in st.session_state:
+    st.session_state.inference_history = []
 
 # ==============================================================================
-# 📊 DASHBOARD ANALYTICS & STATISTIK SISTEM AI (KRITERIA PENILAIAN + BONUS UAS)
+# SIDEBAR
 # ==============================================================================
-st.markdown("### ")
-st.markdown("---")
-st.subheader("📊 Dashboard Analytics & Performa Sistem AI")
-st.caption(
-    "Statistik real-time beban komputasi model Deep Learning U²-Net (ONNX Runtime) "
-    "yang berjalan di server/perangkat lokal pameran."
+st.sidebar.title("AI Background Remover")
+
+menu = st.sidebar.radio(
+    "📂 Navigasi",
+    [
+        "🏠 Beranda",
+        "🖼️ Prediksi",
+        "📊 Dashboard"
+    ]
 )
 
-# Membuat 3 Kolom Kartu Indikator Utama (KPI Cards)
-stat_col1, stat_col2, stat_col3 = st.columns(3)
+# ==============================================================================
+# BERANDA
+# ==============================================================================
+if menu == "🏠 Beranda":
 
-with stat_col1:
-    # Menampilkan waktu proses terakhir
-    if st.session_state.last_inference_time > 0:
-        val_text = f"{st.session_state.last_inference_time:.2f} Detik"
+    home_page()
+
+# ==============================================================================
+# PREDIKSI
+# ==============================================================================
+elif menu == "🖼️ Prediksi":
+
+    remover_page()
+
+# ==============================================================================
+# DASHBOARD
+# ==============================================================================
+elif menu == "📊 Dashboard":
+
+    st.title("📊 Dashboard Statistik")
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.metric(
+            "Jumlah Data Diuji",
+            st.session_state.total_processed_images
+        )
+
+    with col2:
+        avg_time = (
+            np.mean(st.session_state.inference_history)
+            if st.session_state.inference_history
+            else 0
+        )
+
+        st.metric(
+            "Waktu Inferensi Rata-rata",
+            f"{avg_time:.2f} detik"
+        )
+
+    with col3:
+        st.metric(
+            "Akurasi Model",
+            "N/A"
+        )
+
+    st.divider()
+
+    st.subheader("Grafik Waktu Inferensi")
+
+    if st.session_state.inference_history:
+
+        st.line_chart(
+            st.session_state.inference_history
+        )
+
     else:
-        val_text = "0.00 Detik (Sistem Siap)"
-        
-    st.metric(
-        label="⚡ Kecepatan Inferensi Terakhir", 
-        value=val_text,
-        delta="-0.08s" if st.session_state.last_inference_time and st.session_state.last_inference_time < 1.3 else None
-    )
 
-with stat_col2:
-    # Menampilkan total data citra digital yang berhasil disegmentasi AI
-    st.metric(
-        label="📈 Total Gambar Diuji (Pameran)", 
-        value=f"{st.session_state.total_processed_images} Foto",
-        delta=f"+{st.session_state.total_processed_images} Berhasil" if st.session_state.total_processed_images > 0 else None
-    )
-
-with stat_col3:
-    # Menghitung nilai rata-rata (Mean) dari riwayat latensi komputasi
-    avg_time = np.mean(st.session_state.inference_history) if st.session_state.inference_history else 0.0
-    st.metric(
-        label="🖥️ Rata-rata Latensi Komputasi", 
-        value=f"{avg_time:.2f} Detik"
-    )
-
-# Menggambar Grafik Line Chart untuk Tren Latensi
-st.markdown("#### ")
-st.markdown("**📈 Grafik Tren Kecepatan Proses Model AI (Detik per Frame):**")
-if st.session_state.inference_history:
-    st.line_chart(st.session_state.inference_history, height=180)
+        st.info(
+            "Belum ada data inferensi."
+        )

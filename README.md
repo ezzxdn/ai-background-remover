@@ -1,82 +1,97 @@
-# 🎞️ AI Photobox with Background Remover
+# 🖼️ AI Background Remover Berbasis Web
 
-AI Photobox adalah aplikasi photobooth berbasis web yang memungkinkan pengguna mengambil empat foto layaknya photobooth modern, kemudian mengganti background secara otomatis menggunakan teknologi background removal berbasis AI.
+Aplikasi berbasis web untuk menghapus background gambar secara otomatis menggunakan teknologi Artificial Intelligence (AI) berbasis model U²-Net melalui library `rembg`.
 
-Aplikasi dikembangkan menggunakan Streamlit sebagai antarmuka utama, Streamlit-WebRTC untuk akses webcam, serta rembg untuk proses penghapusan background. Hasil photostrip dapat diunduh secara langsung maupun melalui QR Code yang terhubung dengan Cloudinary.
+Pengguna dapat mengunggah gambar, menghapus background, mengganti background baru, serta mengunduh hasil dalam format PNG transparan maupun JPG.
+
+Selain fitur utama background remover, aplikasi juga dilengkapi fitur pengembangan berupa photobox interaktif berbasis webcam.
+
+---
+
+## 👨‍🎓 Informasi Proyek
+
+**Judul:**
+Implementasi AI Background Remover Berbasis Web dengan Fitur Photobox Interaktif
+
+**Mata Kuliah:**
+Image Processing
+
+**Mahasiswa:**
+Ezza Addini
 
 ---
 
 ## ✨ Fitur Utama
 
-* 📷 Realtime webcam preview dengan efek mirror.
-* ⏳ Countdown otomatis 5 detik sebelum pengambilan foto.
-* 🎞️ Photobooth 4-cut (empat foto dalam satu strip).
-* 🎨 Pilihan warna frame photostrip.
-* 🖼️ Penggantian background menggunakan AI (rembg).
-* 👀 Preview hasil photostrip sebelum finalisasi.
-* ⬇️ Download hasil photostrip dalam format JPG.
-* 📱 QR Code untuk mengunduh hasil photostrip.
-* ⚡ Caching foreground agar pergantian background lebih cepat.
-* 🔄 Reset session untuk memulai sesi baru.
+### AI Background Remover
+- Upload gambar JPG, JPEG, atau PNG.
+- Penghapusan background otomatis menggunakan AI.
+- Pilihan background baru:
+  - Transparan (PNG)
+  - Warna solid pasfoto
+  - Background gambar
+- Download hasil PNG transparan.
+- Download hasil JPG.
+
+### Dashboard Statistik
+- Total gambar yang diproses.
+- Waktu inferensi terakhir.
+- Rata-rata waktu inferensi.
+- Grafik tren performa inferensi.
+
+### Photobox Interaktif (Pengembangan)
+- Webcam realtime.
+- Countdown otomatis.
+- Photostrip 4-cut.
+- Preview hasil.
+- QR Code download menggunakan Cloudinary.
 
 ---
 
 ## 🛠️ Teknologi yang Digunakan
 
-| Teknologi        | Fungsi                         |
-| ---------------- | ------------------------------ |
-| Streamlit        | Antarmuka aplikasi web         |
-| Streamlit-WebRTC | Akses webcam secara realtime   |
-| OpenCV           | Pengolahan citra               |
-| Pillow           | Manipulasi gambar              |
-| rembg            | Background removal berbasis AI |
-| ONNX Runtime     | Menjalankan model rembg        |
-| Cloudinary       | Penyimpanan hasil photostrip   |
-| qrcode           | Pembuatan QR Code              |
-| NumPy            | Operasi array numerik          |
-| AV               | Konversi frame video           |
+| Teknologi | Fungsi |
+|---|---|
+| Streamlit | Framework web |
+| rembg | Background remover |
+| U²-Net | Model segmentasi |
+| ONNX Runtime | Menjalankan model AI |
+| Pillow | Manipulasi gambar |
+| NumPy | Operasi numerik |
+| Streamlit-WebRTC | Webcam realtime |
+| OpenCV | Pengolahan citra |
+| Cloudinary | Penyimpanan hasil |
+| qrcode | QR download |
 
 ---
 
-## 📁 Struktur Project
+## 📁 Struktur Proyek
 
 ```text
-bg-remover-app/
+ai-background-remover/
 │
 ├── app.py
 ├── requirements.txt
 ├── README.md
 │
 ├── bg/
-│   ├── backgrounds/
-│   └── frames/
-│
-├── views/
-│   ├── photobox.py
-│   └── bg_remover.py
-│
 ├── utils/
-│   ├── bg_config.py
-│   ├── bg_editor.py
-│   ├── photostrip.py
-│   └── cloudinary_utils.py
-│
+├── views/
 └── .streamlit/
-    └── secrets.toml
 ```
 
 ---
 
 ## 🚀 Instalasi
 
-### 1. Clone repository
+Clone repository:
 
 ```bash
-git clone <repository-url>
-cd bg-remover-app
+git clone https://github.com/ezzxdn/ai-background-remover.git
+cd ai-background-remover
 ```
 
-### 2. Buat virtual environment
+Buat virtual environment:
 
 Windows:
 
@@ -92,7 +107,7 @@ python -m venv .venv
 source .venv/bin/activate
 ```
 
-### 3. Install dependency
+Install dependency:
 
 ```bash
 pip install -r requirements.txt
@@ -102,59 +117,29 @@ pip install -r requirements.txt
 
 ## ▶️ Menjalankan Aplikasi
 
-Jalankan perintah berikut:
-
 ```bash
 streamlit run app.py
 ```
 
-Buka browser pada alamat:
+Akses melalui browser:
 
-```text
+```
 http://localhost:8501
 ```
 
 ---
 
-## 📸 Cara Menggunakan
+## 🤖 Cara Kerja AI Background Remover
 
-1. Pilih warna frame photostrip.
-2. Klik tombol **Start Photobox**.
-3. Ambil empat foto dengan countdown otomatis.
-4. Setelah sesi selesai, pilih background yang diinginkan.
-5. Lihat preview hasil photostrip.
-6. Unduh hasil secara langsung atau buat QR Code untuk diunduh melalui perangkat lain.
-
----
-
-## ☁️ Konfigurasi Cloudinary
-
-Buat file:
-
-```text
-.streamlit/secrets.toml
-```
-
-Isi dengan:
-
-```toml
-CLOUD_NAME="your_cloud_name"
-API_KEY="your_api_key"
-API_SECRET="your_api_secret"
-```
-
----
-
-## 🤖 Tentang Background Removal
-
-Proses penghapusan background dilakukan menggunakan library rembg yang memanfaatkan model U²-Net. Untuk menjaga stabilitas aplikasi, proses background removal dilakukan setelah sesi pemotretan selesai, bukan secara realtime.
-
-Selain itu, hasil foreground disimpan dalam cache sehingga pengguna dapat mencoba berbagai background tanpa perlu menjalankan proses segmentasi ulang.
+1. Pengguna mengunggah gambar.
+2. Gambar diproses menggunakan model U²-Net melalui library rembg.
+3. Model melakukan segmentasi foreground dan background.
+4. Background dihapus secara otomatis.
+5. Pengguna dapat memilih background baru.
+6. Hasil dapat diunduh sesuai kebutuhan.
 
 ---
 
 ## 📄 Lisensi
 
-Project ini dikembangkan untuk keperluan pembelajaran dan tugas akhir/UAS mata kuliah Image Processing.
-
-Silakan gunakan dan modifikasi sesuai kebutuhan akademik.
+Dikembangkan untuk keperluan akademik pada mata kuliah Image Processing.

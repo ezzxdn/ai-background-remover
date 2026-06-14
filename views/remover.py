@@ -1,7 +1,7 @@
 import streamlit as st
 from PIL import Image, ImageColor
-import os
 import io
+import time
 
 from utils.rembg_utils import (
     remove_background,
@@ -119,11 +119,24 @@ def remover_page():
     # ======================================
     # REMOVE BACKGROUND
     # ======================================
+    start = time.time()
+
     with st.spinner(
         "AI sedang menghapus background..."
     ):
 
         foreground = remove_background(image)
+
+    elapsed = time.time() - start
+
+    st.session_state.last_inference_time = elapsed
+
+    st.session_state.total_processed_images += 1
+
+    st.session_state.inference_history.append(
+        elapsed
+    )
+
 
     # ======================================
     # SIDEBAR OPTION
